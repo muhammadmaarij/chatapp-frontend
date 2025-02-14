@@ -1,0 +1,47 @@
+@use "../../styles/variables.scss" as *;
+
+.navbar {
+  width: 100%;
+  height: 60px;
+  background: $primary-color;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  justify-content: center;
+}
+
+/* Search Container */
+.searchContainer {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px 15px;
+  border-radius: 8px;
+  width: 300px;
+  color: white;
+}
+
+/* Search Input */
+.searchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* Search Icon */
+.searchIcon {
+  margin-right: 10px;
+  color: rgba(255, 255, 255, 0.8);
+}

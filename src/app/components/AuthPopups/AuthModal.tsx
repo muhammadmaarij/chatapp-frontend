@@ -4,6 +4,7 @@ import styles from "./AuthModal.module.scss";
 import Image from "next/image";
 import { Images } from "@/constants/images";
 import { righteous } from "@/app/fonts";
+import { useRouter } from "next/navigation";
 
 
 
@@ -16,6 +17,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ onClose, mode, toggleMode, onSignupComplete }: AuthModalProps) {
+  const router = useRouter();
   const isSignup = mode === "signup";
 
   const [formData, setFormData] = useState({
@@ -35,6 +37,9 @@ export default function AuthModal({ onClose, mode, toggleMode, onSignupComplete 
 
     if (isSignup && onSignupComplete) {
       onSignupComplete(formData.email); // Call function to show Confirmation Modal
+    }
+    else{
+      router.push("/dashboard");
     }
   };
 

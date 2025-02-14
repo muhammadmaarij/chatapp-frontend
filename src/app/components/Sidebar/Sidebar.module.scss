@@ -1,0 +1,95 @@
+@use "../../styles/variables.scss" as *;
+
+.sidebar {
+  width: 80px;
+  height: 100vh;
+  background: $primary-color;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 50px 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  .logo {
+    margin-bottom: 30px;
+    margin-top: 20px;
+  }
+
+  .navLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .navItem {
+    background: none;
+    border: none;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s ease-in-out;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .bottomSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 100px;
+  }
+
+  .addButton {
+    background: none;
+    border: 0;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+
+    &:hover {
+      background: white;
+      color: $primary-color;
+    }
+  }
+
+  .profile {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .profilePic {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
+
+  .onlineIndicator {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    background: #00ff00;
+    border-radius: 50%;
+    border: 2px solid $primary-color;
+  }
+}
