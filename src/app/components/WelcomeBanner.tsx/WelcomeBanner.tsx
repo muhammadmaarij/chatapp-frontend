@@ -81,6 +81,7 @@ export default function WelcomeBanner() {
         <ConfirmationModal 
           onClose={() => setConfirmationOpen(false)} 
           email={email}
+          onSuccess={() => console.log("Verification Successful! Redirect user...")}
         />
       )}
     </section>

@@ -5,8 +5,8 @@ import Image from "next/image";
 import { Images } from "@/constants/images";
 import { righteous } from "@/app/fonts";
 import { useRouter } from "next/navigation";
-
-
+import useSignin from "@/hooks/auth/useSignin";
+import useSignup from "@/hooks/auth/useSignup";
 
 
 interface AuthModalProps {
@@ -20,10 +20,21 @@ export default function AuthModal({ onClose, mode, toggleMode, onSignupComplete 
   const router = useRouter();
   const isSignup = mode === "signup";
 
+  const { login, isPending: isLoggingIn, isError: loginError, error: loginErrorMessage } = useSignin();
+  const { signup, isPending: isSigningUp, isError: signupError, error: signupErrorMessage } = useSignup();
+
+
   const [formData, setFormData] = useState({
     email: "",
-    displayName: isSignup ? "" : undefined,
+    display_name: isSignup ? "" : undefined,
     username: isSignup ? "" : undefined,
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({
+    email: "",
+    name: "",
+    username: "",
     password: "",
   });
 
@@ -32,14 +43,49 @@ export default function AuthModal({ onClose, mode, toggleMode, onSignupComplete 
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
 
-    if (isSignup && onSignupComplete) {
-      onSignupComplete(formData.email); // Call function to show Confirmation Modal
+  //   if (isSignup && onSignupComplete) {
+  //     onSignupComplete(formData.email); // Call function to show Confirmation Modal
+  //   }
+  //   else{
+  //     router.push("/dashboard");
+  //   }
+  // };
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    if (isSignup) {
+      try {
+        await signup(formData);
+        if (onSignupComplete) onSignupComplete(formData.email);
+      } catch (err: any) {
+        if (Array.isArray(err.response?.data?.errors)) {
+          const newErrors: Partial<typeof errors> = {};
+  
+          err.response.data.errors.forEach((error: any) => {
+            const fieldName = error.path[0]; // The field name from the API error
+            
+            // Ensure fieldName is a valid key of FormData
+            if (fieldName in formData) {
+              newErrors[fieldName as keyof typeof errors] = error.message;
+            }
+          });
+  
+          setErrors({ ...errors, ...newErrors });
+        }
+      }
     }
-    else{
-      router.push("/dashboard");
+     else {
+      try {
+        await login({ email: formData.email, password: formData.password });
+        router.push("/dashboard"); // Redirect after login
+      } catch (err) {
+        console.error("Login failed:", err);
+      }
     }
   };
 
@@ -71,9 +117,9 @@ export default function AuthModal({ onClose, mode, toggleMode, onSignupComplete 
               <>
                 <input
                   type="text"
-                  name="displayName"
+                  name="display_name"
                   placeholder="Display Name"
-                  value={formData.displayName}
+                  value={formData.display_name}
                   onChange={handleChange}
                 />
                 <input

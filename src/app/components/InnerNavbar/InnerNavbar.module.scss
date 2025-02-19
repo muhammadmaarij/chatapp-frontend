@@ -1,7 +1,20 @@
 @use "../../styles/variables.scss" as *;
 
 .innerNavbar {
-  width: 280px;
+  position: fixed; // ✅ Fix position
+  // left: 0;
+  // top: 0;
+  height: 100vh; // ✅ Full height
+  width: 250px; // ✅ Fixed width (Adjust based on your design)
+  background: #f8f9fa; // ✅ Same background color
+  border-right: 1px solid #ddd;
+  overflow-y: auto; // ✅ Allow scrolling within the navbar
+  z-index: 1000; // ✅ Ensure it stays on top
+}
+
+
+.innerNavbar {
+  width: 250px;
   height: 100vh;
   background: $secondary-color;
   padding: 20px;
@@ -11,10 +24,14 @@
 }
 
 .heading {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 24px;
+  font-weight: 500;
   color: $primary-color;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-top: 50px;
+}
+.line{
+    border-top: 1px solid #005F93;
 }
 
 /* Sections */
@@ -51,6 +68,25 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.viewProfile {
+  background: transparent;
+  color:$primary-color;
+  padding: 8px 13px;
+  border: 1px solid $primary-color;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  width: 250px;
+  margin-top: 20px;
+
+  &:hover {
+    background: #0077cc;
+    color: white;
+  }
 }
 
 /* Groups and Direct Messages Styling */
@@ -91,4 +127,38 @@
   display: flex;
   flex-direction: column;
   gap: 5px; /* ✅ Reduce vertical gap */
+}
+
+
+.groupAvatar {
+  border-radius: 50%;
+}
+
+.createGroupButton {
+  background: $primary-color;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+  border: none;
+  font-weight: 600;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.modalOverlay {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
 }

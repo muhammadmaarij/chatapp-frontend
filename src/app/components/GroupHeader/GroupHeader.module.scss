@@ -1,0 +1,72 @@
+@use "../../styles/variables.scss" as *;
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px;
+  border-bottom: 1px solid #e1e8ed;
+  margin-top: -20px;
+}
+
+/* Group Title */
+.groupTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: $primary-color;
+  }
+}
+
+.hashIcon {
+  color: $primary-color;
+}
+
+/* Members List */
+.membersList {
+  display: flex;
+  align-items: center;
+}
+
+/* Overlapping Avatars */
+.memberAvatar {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+//   position: relative;
+  margin-left: -12px; /* ✅ Overlap Effect */
+//   border: 2px solid white; /* ✅ Border to separate avatars */
+
+  &:first-child {
+    margin-left: 0; /* ✅ No overlap on first avatar */
+  }
+}
+
+/* Extra Members Count */
+.extraMembers {
+  background: #cbd5e0;
+  color: #1a202c;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -10px; /* ✅ Align with last avatar */
+//   border: 2px solid white;
+}
+
+/* Loading/Error */
+.loading,
+.error {
+  padding: 10px;
+  text-align: center;
+  color: #4a5568;
+}
