@@ -1,0 +1,47 @@
+@use "../styles/variables.scss" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
+  background: #f8fcff;
+  text-align: center;
+  margin-left: 125px;
+}
+
+.imageWrapper {
+  display: flex;
+  justify-content: center;
+//   margin-bottom: 20px;
+}
+
+.image {
+  max-width: 100%;
+  height: auto;
+}
+
+.textContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.heading {
+  font-size: 28px;
+  font-weight: 700;
+  color: $primary-color;
+}
+
+.subtext {
+  font-size: 16px;
+  font-weight: 500;
+  color: $primary-color;
+}
+
+.description {
+  font-size: 14px;
+  color: #6b7280;
+}

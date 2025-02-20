@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./AuthModal.module.scss";
 import Image from "next/image";
 import { Images } from "@/constants/images";
@@ -7,7 +7,7 @@ import { righteous } from "@/app/fonts";
 import { useRouter } from "next/navigation";
 import useSignin from "@/hooks/auth/useSignin";
 import useSignup from "@/hooks/auth/useSignup";
-
+import toast from "react-hot-toast"; // ✅ Import toast
 
 interface AuthModalProps {
   onClose: () => void;
@@ -20,127 +20,147 @@ export default function AuthModal({ onClose, mode, toggleMode, onSignupComplete 
   const router = useRouter();
   const isSignup = mode === "signup";
 
-  const { login, isPending: isLoggingIn, isError: loginError, error: loginErrorMessage } = useSignin();
-  const { signup, isPending: isSigningUp, isError: signupError, error: signupErrorMessage } = useSignup();
-
+  const { login, isPending: isLoggingIn } = useSignin();
+  const { signup, isPending: isSigningUp } = useSignup();
 
   const [formData, setFormData] = useState({
     email: "",
-    display_name: isSignup ? "" : undefined,
-    username: isSignup ? "" : undefined,
-    password: "",
-  });
-
-  const [errors, setErrors] = useState({
-    email: "",
-    name: "",
+    display_name: "",
     username: "",
     password: "",
   });
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [passwordStrength, setPasswordStrength] = useState("");
+
+  useEffect(() => {
+    setFormData({ email: "", display_name: "", username: "", password: "" });
+    setErrors({});
+    setPasswordStrength("");
+  }, [mode]);
+
+  useEffect(() => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+
+    if (formData.password) {
+      if (formData.password.length < 6) {
+        newErrors.password = "Must be at least 6 characters";
+        setPasswordStrength("Weak");
+      } else if (formData.password.length < 10) {
+        setPasswordStrength("Medium");
+      } else {
+        setPasswordStrength("Strong");
+      }
+    } else {
+      setPasswordStrength("");
+    }
+
+    setErrors(newErrors);
+  }, [formData]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   if (isSignup && onSignupComplete) {
-  //     onSignupComplete(formData.email); // Call function to show Confirmation Modal
-  //   }
-  //   else{
-  //     router.push("/dashboard");
-  //   }
-  // };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    if (isSignup) {
-      try {
+
+    if (Object.values(errors).some((err) => err !== "")) return;
+
+    try {
+      if (isSignup) {
         await signup(formData);
+        toast.success("Signup successful! Check your email for verification.");
         if (onSignupComplete) onSignupComplete(formData.email);
-      } catch (err: any) {
-        if (Array.isArray(err.response?.data?.errors)) {
-          const newErrors: Partial<typeof errors> = {};
-  
-          err.response.data.errors.forEach((error: any) => {
-            const fieldName = error.path[0]; // The field name from the API error
-            
-            // Ensure fieldName is a valid key of FormData
-            if (fieldName in formData) {
-              newErrors[fieldName as keyof typeof errors] = error.message;
-            }
-          });
-  
-          setErrors({ ...errors, ...newErrors });
-        }
-      }
-    }
-     else {
-      try {
+      } else {
         await login({ email: formData.email, password: formData.password });
-        router.push("/dashboard"); // Redirect after login
-      } catch (err) {
-        console.error("Login failed:", err);
+        toast.success("Login successful! Redirecting...");
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      if (err.response?.data?.error) {
+        toast.error(err.response.data.error); // ✅ Show error in a toast
       }
     }
   };
 
   return (
-    <div className={styles.modalContainer}> {/* ✅ Apply the wrapper class */}
+    <div className={styles.modalContainer}>
       <div className={styles.overlay}>
         <div className={styles.modal}>
           <button className={styles.closeButton} onClick={onClose}>
-          <Image
-            src={Images.crossSvgDark}
-            alt={"logo here"}
-            height={30}
-            width={30}
-            />
-            </button>
-            <h2 className={`${righteous.className} ${styles.heading}`}>{isSignup ? "Signup" : "Login"}</h2>
-
+            <Image src={Images.crossSvgDark} alt="Close" height={30} width={30} />
+          </button>
+          <h2 className={`${righteous.className} ${styles.heading}`}>
+            {isSignup ? "Signup" : "Login"}
+          </h2>
 
           <form onSubmit={handleSubmit}>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address / Phone Number"
-              value={formData.email}
-              onChange={handleChange}
-            />
+            <div className={styles.inputContainer}>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+              {errors.email && <p className={styles.error}>{errors.email}</p>}
+            </div>
 
             {isSignup && (
               <>
-                <input
-                  type="text"
-                  name="display_name"
-                  placeholder="Display Name"
-                  value={formData.display_name}
-                  onChange={handleChange}
-                />
-                <input
-                  type="text"
-                  name="username"
-                  placeholder="Username"
-                  value={formData.username}
-                  onChange={handleChange}
-                />
+                <div className={styles.inputContainer}>
+                  <input
+                    type="text"
+                    name="display_name"
+                    placeholder="Display Name"
+                    value={formData.display_name}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className={styles.inputContainer}>
+                  <input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </>
             )}
 
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-            />
+            <div className={styles.inputContainer}>
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              {errors.password && <p className={styles.error}>{errors.password}</p>}
+              {passwordStrength && isSignup && (
+                <p className={`${styles.passwordStrength} ${styles[passwordStrength.toLowerCase()]}`}>
+                  Password strength: <strong>{passwordStrength}</strong>
+                </p>
+              )}
+            </div>
 
-            <button type="submit" className={styles.authButton}>
+            <button
+              type="submit"
+              className={styles.authButton}
+              disabled={isLoggingIn || isSigningUp || Object.values(errors).some((err) => err !== "")}
+            >
               {isSignup ? "Signup" : "Login"}
             </button>
           </form>

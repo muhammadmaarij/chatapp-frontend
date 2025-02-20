@@ -10,6 +10,7 @@
   border-right: 1px solid #ddd;
   overflow-y: auto; // ✅ Allow scrolling within the navbar
   z-index: 1000; // ✅ Ensure it stays on top
+  margin-top: 60px;
 }
 
 

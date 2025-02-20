@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
 import styles from "./MessageInput.module.scss";
+import { useState } from "react";
 import {
   Send,
   Mic,
@@ -18,26 +18,68 @@ import {
 import { useSocket } from "@/context/socketContext";
 import { useSendMessage } from "@/hooks/chat/useSendMessage";
 import { useSendMediaMessage } from "@/hooks/chat/useSendMediaMessage";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import BoldExtension from "@tiptap/extension-bold";
+import ItalicExtension from "@tiptap/extension-italic";
+import CodeExtension from "@tiptap/extension-code";
+import ListItem from "@tiptap/extension-list-item";
+import OrderedList from "@tiptap/extension-ordered-list";
+import BulletList from "@tiptap/extension-bullet-list";
 
 interface MessageInputProps {
   conversationId: string;
 }
 
 export default function MessageInput({ conversationId }: MessageInputProps) {
-  const [message, setMessage] = useState("");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const { socket } = useSocket();
-
   const { mutate: sendMessage, isPending } = useSendMessage(conversationId);
   const { mutate: sendMediaMessage, isPending: isMediaSending } = useSendMediaMessage(conversationId);
 
+  // ✅ Tiptap Editor setup
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      BoldExtension,
+      ItalicExtension,
+      CodeExtension,
+      BulletList,
+      OrderedList,
+      ListItem,
+    ],
+    content: "",
+    editorProps: {
+      attributes: {
+        class: styles.editorInput, // ✅ Apply custom styles
+      },
+    },
+    onUpdate: ({ editor }) => {
+      // Trim empty content from editor
+      if (editor.getText().trim() === "") {
+        editor.commands.clearContent();
+      }
+    },
+  });
+
+  // ✅ Send message when pressing Enter (without Shift)
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault(); // Prevents new line
+      handleSendMessage();
+    }
+  };
+
   const handleSendMessage = () => {
-    if (!message.trim() && selectedFiles.length === 0) return;
+    if (!editor) return;
+
+    const message = editor.getHTML().trim();
+    if (!message && selectedFiles.length === 0) return;
 
     if (selectedFiles.length > 0) {
       const formData = new FormData();
       formData.append("conversation_id", conversationId);
-      formData.append("caption", message.trim());
+      formData.append("caption", message || "");
 
       selectedFiles.forEach((file) => {
         formData.append("files", file);
@@ -45,14 +87,13 @@ export default function MessageInput({ conversationId }: MessageInputProps) {
 
       sendMediaMessage(formData, {
         onSuccess: () => {
-          setSelectedFiles([]); // Clear selected images
-          setMessage(""); // Clear input field
+          setSelectedFiles([]);
+          editor.commands.clearContent();
         },
       });
-
     } else {
-      sendMessage({ type: "text", content: message.trim() }, {
-        onSuccess: () => setMessage(""), // Clear input on success
+      sendMessage({ type: "text", content: message || "" }, {
+        onSuccess: () => editor.commands.clearContent(),
       });
     }
   };
@@ -69,24 +110,31 @@ export default function MessageInput({ conversationId }: MessageInputProps) {
 
   return (
     <div className={styles.messageInput}>
+      {/* ✅ Toolbar for Formatting */}
       <div className={styles.toolbar}>
-        <button><Bold size={16} /></button>
-        <button><Italic size={16} /></button>
-        <button><Code size={16} /></button>
-        <button><List size={16} /></button>
-        <button><ListOrdered size={16} /></button>
-        <button><Link size={16} /></button>
+        <button onClick={() => editor?.chain().focus().toggleBold().run()}>
+          <Bold size={16} />
+        </button>
+        <button onClick={() => editor?.chain().focus().toggleItalic().run()}>
+          <Italic size={16} />
+        </button>
+        <button onClick={() => editor?.chain().focus().toggleCode().run()}>
+          <Code size={16} />
+        </button>
+        <button onClick={() => editor?.chain().focus().toggleBulletList().run()}>
+          <List size={16} />
+        </button>
+        <button onClick={() => editor?.chain().focus().toggleOrderedList().run()}>
+          <ListOrdered size={16} />
+        </button>
       </div>
 
-      <input
-        type="text"
-        placeholder="Type a message..."
-        className={styles.input}
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-      />
+      {/* ✅ Rich Text Input */}
+      <div className={styles.editorContainer}>
+        {editor && <EditorContent editor={editor} onKeyDown={handleKeyDown} />}
+      </div>
 
+      {/* ✅ Image Previews */}
       {selectedFiles.length > 0 && (
         <div className={styles.previewContainer}>
           {selectedFiles.map((file, index) => (
@@ -100,6 +148,7 @@ export default function MessageInput({ conversationId }: MessageInputProps) {
         </div>
       )}
 
+      {/* ✅ Bottom Toolbar (Emojis, Attachments) */}
       <div className={styles.bottomBar}>
         <div className={styles.toolbar}>
           <button><Smile size={16} /></button>

@@ -1,14 +1,14 @@
 "use client";
 import styles from "./ChatHeader.module.scss";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProfileModal from "../ProfileModal/ProfileModal";
 import { poppins } from "@/app/fonts";
-import { Images } from "@/constants/images";
 import DefaultAvatar from "@/assets/images/default-avatar.jpg";
 import { Hash } from "lucide-react"; // ✅ For Group Icon
 import { baseUrl } from "@/api/constants/baseUrl";
 import GroupHeader from "../GroupHeader/GroupHeader";
+import { useSocket } from "@/context/socketContext"; // ✅ Import socket context
 
 interface ChatHeaderProps {
   chatDetails: {
@@ -22,18 +22,21 @@ interface ChatHeaderProps {
   isGroupChat: boolean;
 }
 
-export default function ChatHeader({
-  chatDetails,
-  isGroupChat,
-}: ChatHeaderProps) {
+export default function ChatHeader({ chatDetails, isGroupChat }: ChatHeaderProps) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  console.log(chatDetails, "chatt");
+  const { onlineUsers } = useSocket(); // ✅ Get online users from socket context
+  const [isUserOnline, setIsUserOnline] = useState(false);
+
+  useEffect(() => {
+    setIsUserOnline(onlineUsers.has(chatDetails.id));
+    console.log(`📡 Online Status of ${chatDetails.display_name}:`, onlineUsers.has(chatDetails.id));
+  }, [onlineUsers, chatDetails.id]);
+
   return (
     <div className={`${poppins.className} ${styles.chatHeader}`}>
-      {isGroupChat && <GroupHeader conversationId={chatDetails.id} /> }
+      {isGroupChat && <GroupHeader conversationId={chatDetails.id} />}
 
       {isGroupChat ? (
-        
         <div className={styles.groupHeader}>
           <div className={styles.groupInfo}>
             <div className={styles.groupTitle}>
@@ -42,10 +45,8 @@ export default function ChatHeader({
             </div>
 
             <p className={styles.subtext}>
-              @Fahad Jalal created this group on January 3rd. This is the very
-              beginning of the
-              <strong> @{chatDetails.name}</strong> This is the very beginning
-              of the {chatDetails.name}.
+              @Fahad Jalal created this group on January 3rd. This is the very beginning
+              of the <strong> @{chatDetails.name}</strong> conversation.
             </p>
           </div>
         </div>
@@ -65,29 +66,19 @@ export default function ChatHeader({
 
           <div className={styles.userInfo}>
             <h3>
-              {chatDetails.display_name} <span className={styles.onlineDot} />
+              {chatDetails.display_name} 
+              {isUserOnline && <span className={styles.onlineDot} />} {/* ✅ Show Green Dot */}
             </h3>
             <p className={styles.subtext}>
-              This conversation is between{" "}
-              <strong>@{chatDetails.username}</strong> and you. Checkout their
-              profile to know more about them.
+              This conversation is between <strong>@{chatDetails.username}</strong> and you.
             </p>
           </div>
 
-          <button
-            className={styles.viewProfile}
-            onClick={() => setIsProfileOpen(true)}
-          >
+          <button className={styles.viewProfile} onClick={() => setIsProfileOpen(true)}>
             View Profile
           </button>
 
-          {/* Profile Modal */}
-          {isProfileOpen && (
-            <ProfileModal
-              user={chatDetails}
-              onClose={() => setIsProfileOpen(false)}
-            />
-          )}
+          {isProfileOpen && <ProfileModal user={chatDetails} onClose={() => setIsProfileOpen(false)} />}
         </div>
       )}
     </div>

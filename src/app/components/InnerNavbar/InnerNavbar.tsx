@@ -111,9 +111,9 @@ export default function InnerNavbar() {
             {isGroupsLoading ? (
               <p>Loading groups...</p>
             ) : (
-              groups?.map((group) => (
+              groups?.map((group, index) => (
                 <p
-                  key={group.group_id} // ✅ Use unique group_id instead of index
+                  key={group.group_id || `group-${index}`} // ✅ Fallback if group_id is missing
                   className={`${styles.subItem} ${poppins.className} ${
                     selectedChat === group.group_id ? styles.selectedChat : ""
                   }`}

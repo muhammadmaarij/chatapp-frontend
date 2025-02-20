@@ -9,6 +9,7 @@ import { useSocket } from "@/context/socketContext";
 import { baseUrl } from "@/api/constants/baseUrl";
 import { poppins } from "@/app/fonts";
 import { useQueryClient } from "@tanstack/react-query";
+import DOMPurify from "dompurify";
 
 interface Message {
   id: string;
@@ -19,6 +20,7 @@ interface Message {
   type: string;
   file_paths: string[] | null;
   avatar_url: string | null;
+  conversation_id: string;
 }
 
 interface MessageListProps {
@@ -36,47 +38,42 @@ export default function MessageList({ conversationId }: MessageListProps) {
   useEffect(() => {
     if (!conversationId) return;
 
+    console.log(`🔄 Switching to conversation: ${conversationId}`);
+
+    // ✅ Leave previous chat
+    socket.emit("leave_conversation");
+    socket.removeAllListeners("new_message");
+
+    // ✅ Join the new conversation
     socket.emit("join_conversation", conversationId);
 
-    socket.on("joined_conversation", (data) => {
-      console.log("✅ Joined conversation:", data);
-    });
+    const handleNewMessage = (msg: Message) => {
+      if (msg.conversation_id !== conversationId) {
+        console.warn(`🚨 Ignoring message for old chat: ${msg.conversation_id}`);
+        return;
+      }
 
-    socket.on("new_message", (msg: Message) => {
-      console.log("📩 New message received:", msg);
+      queryClient.setQueryData<Message[]>(["messages", conversationId], (oldMessages = []) => {
+        const updatedMessages = [...oldMessages, msg]
+          .filter((message, index, self) => self.findIndex((m) => m.id === message.id) === index)
+          .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
-      queryClient.setQueryData(
-        ["messages", conversationId],
-        (oldMessages: any) => {
-          if (!oldMessages) return [msg];
+        return updatedMessages;
+      });
 
-          // ✅ Avoid duplicates & ensure messages are ordered correctly
-          const updatedMessages = [...oldMessages, msg]
-            .filter(
-              (message, index, self) =>
-                self.findIndex((m) => m.id === message.id) === index
-            )
-            .sort(
-              (a, b) =>
-                new Date(a.created_at).getTime() -
-                new Date(b.created_at).getTime()
-            );
-
-          return updatedMessages;
-        }
-      );
-
-      // ✅ Scroll to bottom when a new message arrives
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
-    });
+    };
+
+    socket.on("new_message", handleNewMessage);
 
     return () => {
-      socket.off("joined_conversation");
-      socket.off("new_message");
+      console.log(`🚫 Cleaning up listeners for: ${conversationId}`);
+      socket.emit("leave_conversation", conversationId);
+      socket.off("new_message", handleNewMessage);
     };
-  }, [conversationId, socket, queryClient]);
+  }, [conversationId]);
 
   // ✅ Get messages from React Query cache
   const messages =
@@ -106,12 +103,12 @@ export default function MessageList({ conversationId }: MessageListProps) {
               className={`${poppins.className} ${styles.message}`}
             >
               <Image
-                src={msg.avatar_url?`${baseUrl}${msg?.avatar_url}` : DefaultAvatar}
+                src={msg.avatar_url ? `${baseUrl}${msg.avatar_url}` : DefaultAvatar}
                 alt="Sender Avatar"
                 width={40}
                 height={40}
                 className={styles.avatar}
-                loader={({ src }) => src} // ✅ Bypass next/image restrictions
+                loader={({ src }) => src}
                 unoptimized
               />
 
@@ -124,13 +121,18 @@ export default function MessageList({ conversationId }: MessageListProps) {
                 </div>
 
                 {msg.type === "text" ? (
-                  <p className={styles.text}>{decryptedContent}</p>
+                  <p
+                    className={styles.text}
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(decryptedContent || ""),
+                    }}
+                  />
                 ) : (
                   <div className={styles.mediaContainer}>
                     {msg.file_paths?.map((file, index) => (
                       <a
                         key={`${msg.id}-${index}`} // Ensure unique keys
-                        href={`${baseUrl}${file}`} // ✅ Prepend backend URL
+                        href={`${baseUrl}${file}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >

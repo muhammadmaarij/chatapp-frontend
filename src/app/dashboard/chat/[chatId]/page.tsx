@@ -13,7 +13,6 @@ export default function ChatPage() {
   console.log(chatId, "chatID");
   const searchParams = useSearchParams();
 
-  // ✅ Check if it's a group chat or a direct message
   const isGroupChat = searchParams.get("group_id") !== null;
 
   const chatDetails = isGroupChat
@@ -39,7 +38,7 @@ export default function ChatPage() {
         </div>
 
         <div className={styles.chatContent}>
-          <MessageList conversationId={chatId} isGroupChat={isGroupChat} />
+          <MessageList key={chatId} conversationId={chatId} isGroupChat={isGroupChat} />
         </div>
 
         <div className={styles.messageInputContainer}>
