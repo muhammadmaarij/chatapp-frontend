@@ -9,7 +9,7 @@ export default function DashboardNavbar() {
 
   const handleLogout = () => {
     Cookies.remove("token")
-    router.replace("/"); // ✅ Redirect to login page
+    router.replace("/");
   };
 
   return (
@@ -20,7 +20,6 @@ export default function DashboardNavbar() {
         <input type="text" placeholder="Search QLU Recruiting" className={styles.searchInput} />
       </div>
 
-      {/* 🔹 Logout Button */}
       <button className={styles.logoutButton} onClick={handleLogout}>
         <LogOut size={20} className={styles.logoutIcon} />
         Logout

@@ -15,7 +15,7 @@ export const useConversation = () => {
   const router = useRouter();
   return useMutation({
     mutationFn: async (targetUserId: string) => {
-        return getConversationId( targetUserId ); // ✅ Send only the UUID string
-      },
+      return getConversationId(targetUserId);
+    },
   });
 };

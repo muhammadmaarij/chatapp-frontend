@@ -1,11 +1,14 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import styles from "./CreateGroupModal.module.scss";
-import { X, ChevronDown, Check } from "lucide-react";
+import { ChevronDown, Check } from "lucide-react";
 import Image from "next/image";
 import DefaultAvatar from "@/assets/images/default-avatar.jpg";
 import { useUsers } from "@/hooks/user/useGetAll"; // Fetch users
 import { useCreateGroup } from "@/hooks/chat/useCreateGroup"; // API Hook
+import { poppins } from "@/app/fonts";
+import { baseUrl } from "@/api/constants/baseUrl";
+import CloseButton from "../CloseButton/CloseButton";
 
 interface CreateGroupModalProps {
   onClose: () => void;
@@ -22,24 +25,40 @@ export default function CreateGroupModal({ onClose }: CreateGroupModalProps) {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Handle Avatar Upload
-  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setGroupAvatar(imageUrl);
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setDropdownOpen(false);
     }
   };
 
-  // Toggle Member Selection
+  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setGroupAvatar(URL.createObjectURL(file));
+    }
+  };
+
   const toggleMember = (userId: string) => {
     setSelectedMembers((prev) =>
-      prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId]
     );
   };
 
-  // Handle Group Creation
-  const handleCreateGroup = () => {
+  const handleDropdownToggle = () => {
+    setDropdownOpen((prev) => !prev);
+  };
+
+  const handleGroupCreation = () => {
     if (!groupName.trim() || selectedMembers.length === 0) {
       alert("Please enter a group name and select at least one member.");
       return;
@@ -60,30 +79,15 @@ export default function CreateGroupModal({ onClose }: CreateGroupModalProps) {
     );
   };
 
-  // ✅ Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   return (
-    <div className={styles.modalContainer}>
+    <div className={`${poppins.className} ${styles.modalContainer}`}>
       <div className={styles.overlay} onClick={onClose} />
       <div className={styles.modal}>
-        {/* ✅ Header */}
         <div className={styles.header}>
           <h3>Create a Group</h3>
-          <button className={styles.closeButton} onClick={onClose}>
-            <X size={20} />
-          </button>
+          <CloseButton onClick={onClose} />
         </div>
 
-        {/* ✅ Form Fields */}
         <div className={styles.inputGroup}>
           <label>Group Name</label>
           <input
@@ -95,25 +99,42 @@ export default function CreateGroupModal({ onClose }: CreateGroupModalProps) {
           />
         </div>
 
-        {/* ✅ File Upload */}
         <div className={styles.inputGroup}>
           <label>Group Avatar</label>
-          <input type="file" className={styles.fileInput} accept="image/*" onChange={handleUpload} />
+          <input
+            type="file"
+            className={styles.fileInput}
+            accept="image/*"
+            onChange={handleUpload}
+          />
         </div>
 
-        {/* ✅ Show Image Preview */}
         {groupAvatar && (
           <div className={styles.imageWrapper}>
-            <Image src={groupAvatar} alt="Group Avatar" width={80} height={80} className={styles.groupAvatar} />
+            <Image
+              src={groupAvatar}
+              alt="Group Avatar"
+              width={80}
+              height={80}
+              className={styles.groupAvatar}
+            />
           </div>
         )}
 
-        {/* ✅ Select Members (Multi-Select Dropdown) */}
         <div className={styles.inputGroup} ref={dropdownRef}>
           <label>Select Members</label>
-          <div className={`${styles.selectMembersContainer} ${dropdownOpen ? styles.open : ""}`}>
-            <button className={styles.selectTrigger} onClick={() => setDropdownOpen((prev) => !prev)}>
-              {selectedMembers.length > 0 ? `${selectedMembers.length} selected` : "Select Members"}
+          <div
+            className={`${styles.selectMembersContainer} ${
+              dropdownOpen ? styles.open : ""
+            }`}
+          >
+            <button
+              className={styles.selectTrigger}
+              onClick={handleDropdownToggle}
+            >
+              {selectedMembers.length > 0
+                ? `${selectedMembers.length} selected`
+                : "Select Members"}
               <ChevronDown size={16} />
             </button>
 
@@ -123,12 +144,12 @@ export default function CreateGroupModal({ onClose }: CreateGroupModalProps) {
                   <p>Loading users...</p>
                 ) : (
                   users?.map((user) => (
-                    <div key={user.id} className={styles.memberItem} onClick={() => toggleMember(user.id)}>
-                      <input type="checkbox" checked={selectedMembers.includes(user.id)} className={styles.checkbox} readOnly />
-                      <Image src={user.avatar_url || DefaultAvatar} alt={user.username} width={30} height={30} className={styles.avatar} />
-                      {user.username}
-                      {selectedMembers.includes(user.id) && <Check size={16} color="#0077cc" />}
-                    </div>
+                    <UserItem
+                      key={user.id}
+                      user={user}
+                      isSelected={selectedMembers.includes(user.id)}
+                      onToggle={toggleMember}
+                    />
                   ))
                 )}
               </div>
@@ -136,12 +157,51 @@ export default function CreateGroupModal({ onClose }: CreateGroupModalProps) {
           </div>
         </div>
 
-        {/* ✅ Buttons */}
         <div className={styles.buttonGroup}>
-          <button className={styles.cancelButton} onClick={onClose}>Cancel</button>
-          <button className={styles.saveButton} onClick={handleCreateGroup} disabled={isPending}>{isPending ? "Creating..." : "Create Group"}</button>
+          <button className={styles.cancelButton} onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            className={styles.saveButton}
+            onClick={handleGroupCreation}
+            disabled={isPending}
+          >
+            {isPending ? "Creating..." : "Create Group"}
+          </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+interface UserItemProps {
+  user: { id: string; username: string; avatar_url: string | null };
+  isSelected: boolean;
+  onToggle: (userId: string) => void;
+}
+
+function UserItem({ user, isSelected, onToggle }: UserItemProps) {
+  const handleClick = () => {
+    onToggle(user.id);
+  };
+
+  return (
+    <div className={styles.memberItem} onClick={handleClick}>
+      <input
+        type="checkbox"
+        checked={isSelected}
+        className={styles.checkbox}
+        readOnly
+      />
+      <Image
+        src={user.avatar_url ? `${baseUrl}${user.avatar_url}` : DefaultAvatar}
+        alt={user.username}
+        width={30}
+        height={30}
+        className={styles.avatar}
+      />
+      {user.username}
+      {isSelected && <Check size={16} color="#0077cc" />}
     </div>
   );
 }

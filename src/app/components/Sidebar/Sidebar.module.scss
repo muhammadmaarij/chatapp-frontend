@@ -14,7 +14,7 @@
   top: 0;
 
   .logo {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     margin-top: 20px;
   }
 
@@ -29,7 +29,7 @@
   .navItem {
     background: none;
     border: none;
-    color: white;
+    color: $white;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -54,7 +54,7 @@
   .addButton {
     background: none;
     border: 0;
-    color: white;
+    color: $white;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -65,7 +65,7 @@
     transition: 0.2s ease-in-out;
 
     &:hover {
-      background: white;
+      background: $white;
       color: $primary-color;
     }
   }

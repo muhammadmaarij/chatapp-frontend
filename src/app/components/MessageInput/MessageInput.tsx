@@ -1,6 +1,6 @@
 "use client";
-import styles from "./MessageInput.module.scss";
 import { useState } from "react";
+import styles from "./MessageInput.module.scss";
 import {
   Send,
   Mic,
@@ -10,7 +10,6 @@ import {
   Code,
   Bold,
   Italic,
-  Link,
   List,
   ListOrdered,
   X,
@@ -18,7 +17,7 @@ import {
 import { useSocket } from "@/context/socketContext";
 import { useSendMessage } from "@/hooks/chat/useSendMessage";
 import { useSendMediaMessage } from "@/hooks/chat/useSendMediaMessage";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import BoldExtension from "@tiptap/extension-bold";
 import ItalicExtension from "@tiptap/extension-italic";
@@ -33,39 +32,21 @@ interface MessageInputProps {
 
 export default function MessageInput({ conversationId }: MessageInputProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const { socket } = useSocket();
   const { mutate: sendMessage, isPending } = useSendMessage(conversationId);
   const { mutate: sendMediaMessage, isPending: isMediaSending } = useSendMediaMessage(conversationId);
 
-  // ✅ Tiptap Editor setup
   const editor = useEditor({
-    extensions: [
-      StarterKit,
-      BoldExtension,
-      ItalicExtension,
-      CodeExtension,
-      BulletList,
-      OrderedList,
-      ListItem,
-    ],
+    extensions: [StarterKit, BoldExtension, ItalicExtension, CodeExtension, BulletList, OrderedList, ListItem],
     content: "",
-    editorProps: {
-      attributes: {
-        class: styles.editorInput, // ✅ Apply custom styles
-      },
-    },
+    editorProps: { attributes: { class: styles.editorInput } },
     onUpdate: ({ editor }) => {
-      // Trim empty content from editor
-      if (editor.getText().trim() === "") {
-        editor.commands.clearContent();
-      }
+      if (editor.getText().trim() === "") editor.commands.clearContent();
     },
   });
 
-  // ✅ Send message when pressing Enter (without Shift)
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault(); // Prevents new line
+      event.preventDefault();
       handleSendMessage();
     }
   };
@@ -77,102 +58,122 @@ export default function MessageInput({ conversationId }: MessageInputProps) {
     if (!message && selectedFiles.length === 0) return;
 
     if (selectedFiles.length > 0) {
-      const formData = new FormData();
-      formData.append("conversation_id", conversationId);
-      formData.append("caption", message || "");
-
-      selectedFiles.forEach((file) => {
-        formData.append("files", file);
-      });
-
-      sendMediaMessage(formData, {
+      sendMediaMessage(buildFormData(message), {
         onSuccess: () => {
           setSelectedFiles([]);
           editor.commands.clearContent();
         },
       });
     } else {
-      sendMessage({ type: "text", content: message || "" }, {
-        onSuccess: () => editor.commands.clearContent(),
-      });
+      sendMessage({ type: "text", content: message || "" }, { onSuccess: () => editor.commands.clearContent() });
     }
+  };
+
+  const buildFormData = (message: string) => {
+    const formData = new FormData();
+    formData.append("conversation_id", conversationId);
+    formData.append("caption", message || "");
+    selectedFiles.forEach((file) => formData.append("files", file));
+    return formData;
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      setSelectedFiles([...selectedFiles, ...Array.from(event.target.files)]);
+      setSelectedFiles((prev) => [...prev, ...Array.from(event.target.files)]);
     }
   };
 
   const removeSelectedFile = (index: number) => {
-    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
     <div className={styles.messageInput}>
-      {/* ✅ Toolbar for Formatting */}
-      <div className={styles.toolbar}>
-        <button onClick={() => editor?.chain().focus().toggleBold().run()}>
-          <Bold size={16} />
-        </button>
-        <button onClick={() => editor?.chain().focus().toggleItalic().run()}>
-          <Italic size={16} />
-        </button>
-        <button onClick={() => editor?.chain().focus().toggleCode().run()}>
-          <Code size={16} />
-        </button>
-        <button onClick={() => editor?.chain().focus().toggleBulletList().run()}>
-          <List size={16} />
-        </button>
-        <button onClick={() => editor?.chain().focus().toggleOrderedList().run()}>
-          <ListOrdered size={16} />
-        </button>
-      </div>
+      <Toolbar editor={editor} />
 
-      {/* ✅ Rich Text Input */}
-      <div className={styles.editorContainer}>
-        {editor && <EditorContent editor={editor} onKeyDown={handleKeyDown} />}
-      </div>
+      <div className={styles.editorContainer}>{editor && <EditorContent editor={editor} onKeyDown={handleKeyDown} />}</div>
 
-      {/* ✅ Image Previews */}
-      {selectedFiles.length > 0 && (
-        <div className={styles.previewContainer}>
-          {selectedFiles.map((file, index) => (
-            <div key={index} className={styles.preview}>
-              <img src={URL.createObjectURL(file)} alt="Preview" className={styles.imagePreview} />
-              <button onClick={() => removeSelectedFile(index)} className={styles.removeButton}>
-                <X size={16} />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      {selectedFiles.length > 0 && <ImagePreview selectedFiles={selectedFiles} removeSelectedFile={removeSelectedFile} />}
 
-      {/* ✅ Bottom Toolbar (Emojis, Attachments) */}
-      <div className={styles.bottomBar}>
-        <div className={styles.toolbar}>
-          <button><Smile size={16} /></button>
-          <button><Paperclip size={16} /></button>
-          <button>
-            <label htmlFor="fileInput">
-              <ImageIcon size={16} />
-            </label>
-            <input
-              type="file"
-              id="fileInput"
-              multiple
-              accept="image/*"
-              className={styles.fileInput}
-              onChange={handleFileSelect}
-            />
-          </button>
-          <button><Mic size={16} /></button>
-        </div>
-
-        <button className={styles.sendButton} onClick={handleSendMessage} disabled={isPending || isMediaSending}>
-          <Send size={20} />
-        </button>
-      </div>
+      <BottomToolbar
+        handleFileSelect={handleFileSelect}
+        handleSendMessage={handleSendMessage}
+        isDisabled={isPending || isMediaSending}
+      />
     </div>
   );
 }
+
+const Toolbar = ({ editor }: { editor: Editor | null }) => {
+  const buttons = [
+    { action: () => editor?.chain().focus().toggleBold().run(), icon: <Bold size={16} /> },
+    { action: () => editor?.chain().focus().toggleItalic().run(), icon: <Italic size={16} /> },
+    { action: () => editor?.chain().focus().toggleCode().run(), icon: <Code size={16} /> },
+    { action: () => editor?.chain().focus().toggleBulletList().run(), icon: <List size={16} /> },
+    { action: () => editor?.chain().focus().toggleOrderedList().run(), icon: <ListOrdered size={16} /> },
+  ];
+
+  return (
+    <div className={styles.toolbar}>
+      {buttons.map((btn, index) => (
+        <button key={index} onClick={btn.action}>
+          {btn.icon}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+const ImagePreview = ({ selectedFiles, removeSelectedFile }: { selectedFiles: File[]; removeSelectedFile: (index: number) => void }) => (
+  <div className={styles.previewContainer}>
+    {selectedFiles.map((file, index) => (
+      <div key={index} className={styles.preview}>
+        <img src={URL.createObjectURL(file)} alt="Preview" className={styles.imagePreview} />
+        <button onClick={() => removeSelectedFile(index)} className={styles.removeButton}>
+          <X size={16} />
+        </button>
+      </div>
+    ))}
+  </div>
+);
+
+const BottomToolbar = ({
+  handleFileSelect,
+  handleSendMessage,
+  isDisabled,
+}: {
+  handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSendMessage: () => void;
+  isDisabled: boolean;
+}) => {
+  const buttons = [
+    { icon: <Smile size={16} />, action: () => {} },
+    { icon: <Paperclip size={16} />, action: () => {} },
+    {
+      icon: (
+        <label htmlFor="fileInput">
+          <ImageIcon size={16} />
+        </label>
+      ),
+      action: () => {},
+    },
+    { icon: <Mic size={16} />, action: () => {} },
+  ];
+
+  return (
+    <div className={styles.bottomBar}>
+      <div className={styles.toolbar}>
+        {buttons.map((btn, index) => (
+          <button key={index} onClick={btn.action}>
+            {btn.icon}
+          </button>
+        ))}
+        <input type="file" id="fileInput" multiple accept="image/*" className={styles.fileInput} onChange={handleFileSelect} />
+      </div>
+
+      <button className={styles.sendButton} onClick={handleSendMessage} disabled={isDisabled}>
+        <Send size={20} />
+      </button>
+    </div>
+  );
+};

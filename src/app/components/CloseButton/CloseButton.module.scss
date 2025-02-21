@@ -1,0 +1,12 @@
+@use "../../styles/variables.scss" as *;
+
+.closeButton {
+  // position: absolute;
+  // top: 20px;
+  // right: 5px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: $grey1;
+}

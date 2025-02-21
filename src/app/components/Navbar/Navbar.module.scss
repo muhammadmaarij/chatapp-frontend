@@ -68,7 +68,7 @@
   .dropdownMenu {
     display: none;
     position: absolute;
-    background: white;
+    background: $white;
     list-style: none;
     top: 25px;
     left: 0;
@@ -97,7 +97,7 @@
   /* Try Pulse Button */
   .tryPulse button {
     background: $primary-color;
-    color: white;
+    color: $white;
     padding: 13px 25px;
     border: none;
     border-radius: 7px;

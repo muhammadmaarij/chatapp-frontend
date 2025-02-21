@@ -31,7 +31,7 @@ export default function ChatPage() {
       };
 
   return (
-    <SocketProvider>
+    // <SocketProvider>
       <div className={styles.chatPage}>
         <div className={styles.chatHeader}>
           <ChatHeader chatDetails={chatDetails} isGroupChat={isGroupChat} />
@@ -45,6 +45,6 @@ export default function ChatPage() {
           <MessageInput conversationId={chatId} isGroupChat={isGroupChat} />
         </div>
       </div>
-    </SocketProvider>
+    // </SocketProvider>
   );
 }

@@ -1,10 +1,10 @@
 "use client";
 import styles from "./GroupHeader.module.scss";
 import Image from "next/image";
-import { Hash } from "lucide-react"; // ✅ Group icon
+import { Hash } from "lucide-react";
 import DefaultAvatar from "@/assets/images/default-avatar.jpg";
 import { useGroupInfo } from "@/hooks/chat/useGroupInfo";
-import { baseUrl } from "@/api/constants/baseUrl"; // ✅ Backend URL
+import { baseUrl } from "@/api/constants/baseUrl";
 
 interface GroupHeaderProps {
   conversationId: string;
@@ -22,13 +22,11 @@ export default function GroupHeader({ conversationId }: GroupHeaderProps) {
 
   return (
     <div className={styles.groupHeader}>
-      {/* Group Name with Icon */}
       <div className={styles.groupTitle}>
         <Hash size={20} className={styles.hashIcon} />
         <h2>{group.group_name}</h2>
       </div>
 
-      {/* Members List */}
       <div className={styles.membersList}>
         {visibleMembers.map((member) => (
           <Image
@@ -41,7 +39,6 @@ export default function GroupHeader({ conversationId }: GroupHeaderProps) {
           />
         ))}
 
-        {/* Extra Members Count */}
         {extraMembersCount > 0 && (
           <div className={styles.extraMembers}>+{extraMembersCount}</div>
         )}

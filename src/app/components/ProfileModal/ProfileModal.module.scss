@@ -21,7 +21,7 @@
 
 /* Modal Box */
 .modal {
-  background: #fff;
+  background: $white;
   width: 25%;
 //   max-width: 35%;
   padding: 30px;
@@ -58,7 +58,7 @@
     border: none;
     font-size: 18px;
     cursor: pointer;
-    color: #888;
+    color: $grey1;
   }
 
 /* Heading */

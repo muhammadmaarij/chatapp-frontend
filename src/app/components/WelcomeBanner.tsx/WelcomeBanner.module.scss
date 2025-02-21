@@ -71,7 +71,7 @@
 
 .signupBtn {
   background: $primary-color;
-  color: white;
+  color: $white;
 
   &:hover {
     background: darken($primary-color, 10%);
@@ -79,13 +79,13 @@
 }
 
 .loginBtn {
-  background: white;
+  background: $white;
   color: $primary-color;
   border: 2px solid $primary-color;
 
   &:hover {
     background: $primary-color;
-    color: white;
+    color: $white;
   }
 }
 

@@ -1,4 +1,3 @@
-// src/utils/socket.ts
 import { io, Socket } from "socket.io-client";
 import { baseUrl } from "../constants/baseUrl";
 import Cookies from 'js-cookie';

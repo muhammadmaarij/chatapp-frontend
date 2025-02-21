@@ -29,7 +29,7 @@
   font-weight: 500;
   color: $primary-color;
   margin-bottom: 10px;
-  margin-top: 50px;
+  margin-top: 20px;
 }
 .line{
     border-top: 1px solid #005F93;
@@ -86,7 +86,7 @@
 
   &:hover {
     background: #0077cc;
-    color: white;
+    color: $white;
   }
 }
 
@@ -137,7 +137,7 @@
 
 .createGroupButton {
   background: $primary-color;
-  color: white;
+  color: $white;
   padding: 10px;
   border-radius: 8px;
   cursor: pointer;
@@ -162,4 +162,8 @@
   justify-content: center;
   z-index: 1000;
   background: rgba(0, 0, 0, 0.5);
+}
+
+.unread {
+  font-weight: bold;
 }
