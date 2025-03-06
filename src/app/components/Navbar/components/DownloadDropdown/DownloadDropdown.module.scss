@@ -1,0 +1,40 @@
+@use "../../../../styles/variables.scss" as *;
+
+.dropdown {
+  cursor: pointer;
+  color: $primary-color;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.3s;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+}
+
+.dropdownMenu {
+  display: none;
+  position: absolute;
+  background: $white;
+  list-style: none;
+  top: 25px;
+  left: 0;
+  padding: 10px 0;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown:hover .dropdownMenu {
+  display: block;
+}
+
+.dropdownMenu li {
+  padding: 10px 20px;
+}
+
+.dropdownMenu li a {
+  color: black;
+  text-decoration: none;
+}
+
+.dropdownMenu li a:hover {
+  color: #1abc9c;
+}

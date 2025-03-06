@@ -17,8 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
-          <Toaster position="top-right" reverseOrder={false} />{" "}
-          {/* ✅ Global Toast Support */}
+          <Toaster position="top-right" reverseOrder={false} />
           {children}
         </Providers>
       </body>

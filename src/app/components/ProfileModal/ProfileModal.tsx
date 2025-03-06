@@ -1,103 +1,62 @@
 "use client";
 import styles from "./ProfileModal.module.scss";
-import Image from "next/image";
 import { useState } from "react";
-import { poppins } from "@/app/fonts";
-import { useProfile } from "@/hooks/user/useProfile"; // ✅ Import the API hook
+import { useProfile } from "@/hooks/user/useProfile";
 import EditContactModal from "../EditContactModal/EditContactModal";
 import EditProfileModal from "../EditProfile/EditProfileModal";
-import DefaultAvatar from "@/assets/images/default-avatar.jpg";
-import { baseUrl } from "@/api/constants/baseUrl";
-import CloseButton from "../CloseButton/CloseButton";
-
-interface ProfileModalProps {
-  onClose: () => void;
-}
+import { ProfileModalProps } from "@/types/components/types";
+import ProfileHeader from "./components/ProfileHeader/ProfileHeader";
+import ProfileDetails from "./components/ProfileDetails/ProfileDetails";
+import ProfileContact from "./components/ProfileContact/ProfileContact";
+import ProfileAvatar from "../ProfileAvatar/ProfileAvatar";
+import { poppins } from "@/app/fonts";
 
 export default function ProfileModal({ onClose }: ProfileModalProps) {
-  const { data: user, isLoading } = useProfile(); // ✅ Fetch user data
+  const { data: user, isLoading } = useProfile();
   const [isEditContactOpen, setEditContactOpen] = useState(false);
   const [isEditProfileOpen, setEditProfileOpen] = useState(false);
 
-  if (isLoading) {
+  if (isLoading)
     return <div className={styles.loading}>Loading profile...</div>;
-  }
+
+  const openEditContact = () => setEditContactOpen(true);
+  const closeEditContact = () => setEditContactOpen(false);
+  const openEditProfile = () => setEditProfileOpen(true);
+  const closeEditProfile = () => setEditProfileOpen(false);
 
   return (
     <div className={styles.modalContainer}>
       <div className={styles.overlay} onClick={onClose} />
       <div className={`${poppins.className} ${styles.modal}`}>
-        <div className={styles.header}>
-          <h2 className={styles.heading}>Profile</h2>
-          <CloseButton onClick={onClose} />
-        </div>
-        <hr className={styles.line} />
-
-        <div className={styles.profileImage}>
-          <Image
-            src={
-              user.avatar_url ? `${baseUrl}${user.avatar_url}` : DefaultAvatar
-            }
-            alt="Profile Picture"
-            width={200}
-            height={200}
-            className={styles.avatar}
-          />
-        </div>
-
-        <div className={styles.editSection}>
-          <div className={styles.info}>
-            <h3>{user.display_name || "Unknown"}</h3>
-            <p className={styles.username}>@{user.username}</p>
-          </div>
-          <button
-            className={styles.editButton}
-            onClick={() => setEditProfileOpen(true)}
-          >
-            Edit
-          </button>
-        </div>
-
-        <div className={styles.field}>
-          <p>{user.status || "No status set"}</p>
-        </div>
-
-        <br />
-        <br />
-        <hr className={styles.line} />
-
-        <div className={styles.editSection}>
-          <div className={styles.field}>
-            <label>Email Address</label>
-            <p>{user.email}</p>
-          </div>
-          <button
-            className={styles.editButton}
-            onClick={() => setEditContactOpen(true)}
-          >
-            Edit
-          </button>
-        </div>
-
-        <button className={styles.addInfo}>+ Add Information</button>
+        <ProfileHeader onClose={onClose} />
+        <ProfileAvatar
+          src={user.avatar_url}
+          alt="Profile Avatar"
+          size={280}
+          variant="square"
+        />
+        <ProfileDetails
+          name={user.display_name}
+          username={user.username}
+          status={user.status}
+          onEditProfile={openEditProfile}
+        />
+        <ProfileContact email={user.email} onEditContact={openEditContact} />
       </div>
 
       {isEditContactOpen && (
         <EditContactModal
           initialEmail={user.email}
-          initialContact={""} // Add contact field in the future
-          onClose={() => setEditContactOpen(false)}
+          initialContact={""} // Future field
+          onClose={closeEditContact}
           onSave={(email, contact) => {
-            console.log("Updated Email:", email);
-            console.log("Updated Contact:", contact);
-            setEditContactOpen(false);
+            console.log("Updated Email:", email, "Updated Contact:", contact);
+            closeEditContact();
           }}
         />
       )}
 
-      {isEditProfileOpen && (
-        <EditProfileModal onClose={() => setEditProfileOpen(false)} />
-      )}
+      {isEditProfileOpen && <EditProfileModal onClose={closeEditProfile} />}
     </div>
   );
 }

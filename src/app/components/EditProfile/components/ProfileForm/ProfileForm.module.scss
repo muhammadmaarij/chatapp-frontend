@@ -1,0 +1,38 @@
+@use "../../../../styles/variables.scss" as *;
+
+/* Left Column */
+.leftColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.inputGroup label {
+  font-size: 14px;
+  // font-weight: 600;
+  color: #255e7e;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+  border: 1px solid $primary-color;
+  color: #255e7e;
+  background: $white;
+}
+
+/* Textarea */
+.textarea {
+  resize: none;
+  height: 80px;
+}

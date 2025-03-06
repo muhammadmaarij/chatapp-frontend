@@ -1,101 +1,17 @@
 @use "../../styles/variables.scss" as *;
 
-.welcomeBanner {
-  //   display: flex;
-
-//   height: 100vh;
-
-  
-}
 .container {
-    display: flex;
-    margin-top: 30px;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 60px 60px;
-    background: $secondary-color;
-
-    @media (max-width: 1024px) {
-        flex-direction: column;
-        text-align: center;
-        padding: 30px;
-      }
-  }
-
-.leftContent {
-  flex: 1;
-  max-width: 50%;
-
-  h1 {
-    font-size: 56px;
-    font-weight: 600;
-    color: $primary-color;
-    margin-bottom: 50px;
-  }
-
-  p {
-    font-size: 32px;
-    font-weight: 400;
-    font-family: "Poppins", sans-serif;
-    color: $primary-color;
-    margin-bottom: 50px;
-    line-height: 1.6;
-  }
+  display: flex;
+  margin-top: 30px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 60px 60px;
+  background: $secondary-color;
 
   @media (max-width: 1024px) {
-    max-width: 100%;
-  }
-}
-
-.buttons {
-  display: flex;
-  gap: 15px;
-
-  @media (max-width: 768px) {
     flex-direction: column;
-    align-items: center;
+    text-align: center;
+    padding: 30px;
   }
 }
 
-.signupBtn,
-.loginBtn {
-  font-size: 16px;
-  padding: 13px 48px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-family: "Poppins", sans-serif;
-  transition: 0.3s ease-in-out;
-}
-
-.signupBtn {
-  background: $primary-color;
-  color: $white;
-
-  &:hover {
-    background: darken($primary-color, 10%);
-  }
-}
-
-.loginBtn {
-  background: $white;
-  color: $primary-color;
-  border: 2px solid $primary-color;
-
-  &:hover {
-    background: $primary-color;
-    color: $white;
-  }
-}
-
-.rightImage {
-//   flex: 1;
-//   display: flex;
-//   justify-content: center;
-}
-
-.bannerImage {
-  max-width: 100%;
-  height: auto;
-}

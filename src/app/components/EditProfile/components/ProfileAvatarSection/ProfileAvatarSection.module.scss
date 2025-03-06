@@ -1,0 +1,53 @@
+@use "../../../../styles/variables.scss" as *;
+.rightColumn {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.imageLabel {
+  font-size: 14px;
+  // font-weight: 600;
+  align-self: flex-start;
+  color: #255e7e;
+}
+
+/* Upload Buttons */
+.uploadButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.uploadButton,
+.removeButton {
+  font-size: 12px;
+  padding: 10px 50px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.uploadButton {
+  background: $white;
+  color: $primary-color;
+  border: 2px solid $primary-color;
+  text-align: center;
+  &:hover {
+    background: $primary-color;
+    color: $white;
+  }
+}
+
+.removeButton {
+  background: $white;
+  color: $primary-color;
+  border: 0px;
+}
+
+.removeButton:hover {
+  background: $primary-color;
+  color: $white;
+}

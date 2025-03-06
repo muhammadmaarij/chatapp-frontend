@@ -26,43 +26,6 @@
   color: $primary-color;
 }
 
-/* Members List */
-.membersList {
-  display: flex;
-  align-items: center;
-}
-
-/* Overlapping Avatars */
-.memberAvatar {
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-//   position: relative;
-  margin-left: -12px; /* ✅ Overlap Effect */
-//   border: 2px solid white; /* ✅ Border to separate avatars */
-
-  &:first-child {
-    margin-left: 0; /* ✅ No overlap on first avatar */
-  }
-}
-
-/* Extra Members Count */
-.extraMembers {
-  background: #cbd5e0;
-  color: #1a202c;
-  font-size: 12px;
-  font-weight: bold;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: -10px; /* ✅ Align with last avatar */
-//   border: 2px solid white;
-}
-
 /* Loading/Error */
 .loading,
 .error {

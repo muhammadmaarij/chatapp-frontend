@@ -1,0 +1,80 @@
+@use "../../../../styles/variables.scss" as *;
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Section Header */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  color: $primary-color;
+  font-size: 16px;
+  padding: 10px 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease-in-out;
+  gap: 10px;
+  margin-top: 20px;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+/* Sub-items inside sections */
+.subItems {
+  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.viewProfile {
+  background: transparent;
+  color: $primary-color;
+  padding: 8px 13px;
+  border: 1px solid $primary-color;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  width: 250px;
+  margin-top: 20px;
+
+  &:hover {
+    background: #0077cc;
+    color: $white;
+  }
+}
+
+/* Groups and Direct Messages Styling */
+.subItem,
+.dmItem {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: $primary-color;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  padding: 8px 10px; /* ✅ Same padding for both */
+  border-radius: 8px;
+  width: 90%;
+  margin: 2px 0; /* ✅ Reduce vertical spacing */
+  gap: 10px;
+}
+
+.subItem {
+  padding: 12px 10px;
+}
+
+/* Hover Effect */
+.subItem:hover,
+.dmItem:hover {
+  background: rgba(0, 0, 0, 0.05);
+}

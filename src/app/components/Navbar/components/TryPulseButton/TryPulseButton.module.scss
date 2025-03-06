@@ -1,0 +1,19 @@
+@use "../../../../styles/variables.scss" as *;
+
+/* Try Pulse Button */
+.tryPulse button {
+  background: $primary-color;
+  color: $white;
+  padding: 13px 25px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+  margin-left: 60px;
+  font-family: "Poppins", sans-serif;
+}
+
+.tryPulse button:hover {
+  background: #16a085;
+}

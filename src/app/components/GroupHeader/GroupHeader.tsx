@@ -1,48 +1,24 @@
 "use client";
 import styles from "./GroupHeader.module.scss";
-import Image from "next/image";
 import { Hash } from "lucide-react";
-import DefaultAvatar from "@/assets/images/default-avatar.jpg";
-import { useGroupInfo } from "@/hooks/chat/useGroupInfo";
-import { baseUrl } from "@/api/constants/baseUrl";
-
-interface GroupHeaderProps {
-  conversationId: string;
-}
+import { useGroupInfo } from "@/hooks/group/useGroupInfo";
+import { GroupHeaderProps } from "@/types/components/types";
+import GroupMembers from "./components/GroupMembers";
 
 export default function GroupHeader({ conversationId }: GroupHeaderProps) {
-  const { data, isLoading } = useGroupInfo(conversationId);
+  const { data, isLoading } = useGroupInfo();
 
   if (isLoading) return <p className={styles.loading}>Loading group info...</p>;
   if (!data) return <p className={styles.error}>Failed to load group</p>;
-
-  const { group, members } = data;
-  const visibleMembers = members.slice(0, 3);
-  const extraMembersCount = members.length - 3;
 
   return (
     <div className={styles.groupHeader}>
       <div className={styles.groupTitle}>
         <Hash size={20} className={styles.hashIcon} />
-        <h2>{group.group_name}</h2>
+        <h2>{data.name}</h2>
       </div>
 
-      <div className={styles.membersList}>
-        {visibleMembers.map((member) => (
-          <Image
-            key={member.id}
-            src={member.avatar_url ? `${baseUrl}${member.avatar_url}` : DefaultAvatar}
-            alt="Member Avatar"
-            width={32}
-            height={32}
-            className={styles.memberAvatar}
-          />
-        ))}
-
-        {extraMembersCount > 0 && (
-          <div className={styles.extraMembers}>+{extraMembersCount}</div>
-        )}
-      </div>
+      <GroupMembers members={data.members} />
     </div>
   );
 }

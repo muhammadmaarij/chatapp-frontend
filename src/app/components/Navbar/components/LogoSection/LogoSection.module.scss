@@ -1,0 +1,18 @@
+@use "../../../../styles/variables.scss" as *;
+
+.logo {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  
+
+  .logo1 {
+    height: 50px;
+    width: auto;
+  }
+  
+  .logo2 {
+    height: 30px;
+    width: auto;
+  }

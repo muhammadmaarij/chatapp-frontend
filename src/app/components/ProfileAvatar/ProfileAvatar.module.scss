@@ -1,0 +1,26 @@
+@use "../../styles/variables.scss" as *;
+
+.profileAvatar {
+  object-fit: cover;
+  align-self: center;
+}
+
+.rounded {
+  border-radius: 50%;
+  border: 2px solid $white;
+  // position: relative;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.square {
+  border-radius: 6px;
+}
+
+.membersList {
+  display: flex;
+  align-items: center;
+}
+
+.rounded:not(:first-child) {
+  margin-left: -10px; 
+}

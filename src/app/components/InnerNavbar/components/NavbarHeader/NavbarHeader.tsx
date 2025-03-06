@@ -1,4 +1,4 @@
-import styles from "./InnerNavbar.module.scss";
+import styles from "./NavbarHeader.module.scss";
 import { poppins } from "@/app/fonts";
 
 export default function NavbarHeader() {

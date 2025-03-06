@@ -1,10 +1,13 @@
 import { fetchChatHistory } from "@/api/chat/chatApi";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useMessages = (conversationId: string) => {
+  const queryClient = useQueryClient();
+
   return useQuery({
-    queryKey: ["messages", conversationId], 
-    queryFn: () => fetchChatHistory(conversationId), 
-    enabled: !!conversationId, 
+    queryKey: ["messages", conversationId],
+    queryFn: () => fetchChatHistory(conversationId),
+    enabled: !!conversationId,
+    initialData: queryClient.getQueryData(["messages", conversationId]) || [],
   });
 };

@@ -1,0 +1,28 @@
+@use "../../../../styles/variables.scss" as *;
+@use "../../../../styles/mixins/_mixins.scss" as *;
+
+.groupInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.groupTitle {
+  display: flex;
+  align-items: center;
+  @include text-style(18px, "Poppins", bold);
+  color: $primary-color;
+  gap: 8px;
+  background: #f2f9ff;
+  padding-left: 5px;
+  width: 20%;
+}
+
+.hashIcon {
+  color: $primary-color;
+}
+
+.subtext {
+  @include text-style(14px, "Poppins", 400);
+  color: #5691b2;
+  margin-top: 2px;
+}

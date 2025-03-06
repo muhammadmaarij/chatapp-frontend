@@ -1,0 +1,33 @@
+@use "../../styles/variables.scss" as *;
+@use "../../styles/mixins/_mixins.scss" as *;
+
+.authButton {
+  @include button-style($primary-color, $white, none, 80%, 14px);
+}
+
+/* 🔹 Primary Button */
+.primary {
+  background: $primary-color;
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+/* 🔹 Secondary Button */
+.secondary {
+  background: $secondary-color;
+  &:hover {
+    background: darken($secondary-color, 10%);
+  }
+}
+
+/* 🔹 Outline Button */
+.outline {
+  background: transparent;
+  border: 2px solid $primary-color;
+  color: $primary-color;
+  &:hover {
+    background: $primary-color;
+    color: $white;
+  }
+}

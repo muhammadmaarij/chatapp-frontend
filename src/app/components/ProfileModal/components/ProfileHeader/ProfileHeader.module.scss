@@ -1,0 +1,14 @@
+@use "../../../../styles/variables.scss" as *;
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.heading {
+  font-size: 20px;
+  font-weight: bold;
+}

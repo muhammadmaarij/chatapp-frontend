@@ -3,20 +3,7 @@ import { AxiosError } from "axios";
 import { SigninResponse, ApiError } from "@/types/auth/interfaces";
 import { login } from "@/api/auth/authApi";
 import Cookies from "js-cookie";
-
-
-interface UseLoginResponse {
-  login: (data: { email: string; password: string }) => Promise<void>;
-  isPending: boolean;
-  isError: boolean;
-  error?: ApiError;
-  reset: () => void;
-}
-
-interface ErrorResponseData {
-  message?: string;
-  statusCode?: number;
-}
+import { ErrorResponseData, UseLoginResponse } from "@/types/components/types";
 
 const useLogin = (): UseLoginResponse => {
   const queryClient = useQueryClient();
@@ -28,14 +15,15 @@ const useLogin = (): UseLoginResponse => {
   >({
     mutationFn: login,
     onSuccess: (data) => {
-      Cookies.set("token", data.token)
+      Cookies.set("token", data.token);
       queryClient.setQueryData(["loginData"], data);
     },
   });
 
   const loginError = loginMutation.error
     ? {
-        message: loginMutation.error.response?.data?.message || "Failed to log in",
+        message:
+          loginMutation.error.response?.data?.message || "Failed to log in",
         statusCode: loginMutation.error.response?.status || 500,
       }
     : undefined;

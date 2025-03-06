@@ -1,0 +1,51 @@
+@use "../../../../styles/variables.scss" as *;
+
+.subItems {
+  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.subItem,
+.dmItem {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: $primary-color;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  padding: 8px 10px; /* ✅ Same padding for both */
+  border-radius: 8px;
+  width: 90%;
+  margin: 2px 0; /* ✅ Reduce vertical spacing */
+  gap: 10px;
+}
+
+.subItem {
+  padding: 12px 10px;
+}
+
+/* Hover Effect */
+.subItem:hover,
+.dmItem:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Selected Chat Styling */
+.selectedChat {
+  background: #c7eaff; /* Light blue */
+  margin-left: 10px; /* ✅ Same left margin for both */
+}
+
+/* Ensure sub-items (groups) don’t have extra margins */
+.subItems {
+  margin-left: 20px; /* ✅ Reduced margin */
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* ✅ Reduce vertical gap */
+}
+
+.unread {
+  font-weight: bold;
+}

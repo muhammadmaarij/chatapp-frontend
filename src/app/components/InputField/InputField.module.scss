@@ -1,0 +1,40 @@
+@use "../../styles/variables.scss" as *;
+@use "../../styles/mixins/_mixins.scss" as *;
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 80%;
+  margin: auto;
+}
+
+/* 🔹 Input Field */
+.inputField {
+  @include input-style(100%, 14px);
+  border: 1px solid #ccc;
+  background-color: $secondary-color;
+}
+
+/* 🔹 Error Message */
+.error {
+  @include text-style(12px, "Poppins", 400, #ff4d4f);
+  margin-top: 4px;
+  margin-bottom: -10px;
+}
+
+/* 🔹 Password Strength */
+.passwordStrength {
+  @include text-style(12px, "Poppins", 400);
+  margin-top: 4px;
+}
+
+.weak {
+  color: red;
+}
+.medium {
+  color: orange;
+}
+.strong {
+  color: green;
+}

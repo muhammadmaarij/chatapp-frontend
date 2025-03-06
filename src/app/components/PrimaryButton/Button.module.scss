@@ -1,0 +1,22 @@
+@use "../../styles/variables.scss" as *;
+@use "../../styles/mixins/_mixins.scss" as *;
+
+.button {
+  @include solid-button-style($primary-color, $white);
+}
+
+/* 🔹 Primary Button */
+.primary {
+  background: $primary-color;
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+/* 🔹 Secondary Button */
+.secondary {
+  background: $secondary-color;
+  &:hover {
+    background: darken($secondary-color, 10%);
+  }
+}

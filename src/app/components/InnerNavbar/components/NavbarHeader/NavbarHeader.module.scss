@@ -1,0 +1,12 @@
+@use "../../../../styles/variables.scss" as *;
+
+.heading {
+  font-size: 24px;
+  font-weight: 500;
+  color: $primary-color;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+.line {
+  border-top: 1px solid #005f93;
+}

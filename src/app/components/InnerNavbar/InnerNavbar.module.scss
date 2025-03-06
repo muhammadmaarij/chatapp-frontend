@@ -13,7 +13,6 @@
   margin-top: 60px;
 }
 
-
 .innerNavbar {
   width: 250px;
   height: 100vh;
@@ -22,117 +21,6 @@
   display: flex;
   flex-direction: column;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.heading {
-  font-size: 24px;
-  font-weight: 500;
-  color: $primary-color;
-  margin-bottom: 10px;
-  margin-top: 20px;
-}
-.line{
-    border-top: 1px solid #005F93;
-}
-
-/* Sections */
-.section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Section Header */
-.sectionHeader {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  background: none;
-  border: none;
-  color: $primary-color;
-  font-size: 16px;
-  padding: 10px 5px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.3s ease-in-out;
-  gap: 10px;
-  margin-top: 20px;
-
-  &:hover {
-    opacity: 0.8;
-  }
-}
-
-/* Sub-items inside sections */
-.subItems {
-  margin-left: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.viewProfile {
-  background: transparent;
-  color:$primary-color;
-  padding: 8px 13px;
-  border: 1px solid $primary-color;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s ease-in-out;
-  width: 250px;
-  margin-top: 20px;
-
-  &:hover {
-    background: #0077cc;
-    color: $white;
-  }
-}
-
-/* Groups and Direct Messages Styling */
-.subItem,
-.dmItem {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: $primary-color;
-  cursor: pointer;
-  transition: 0.2s ease-in-out;
-  padding: 8px 10px; /* ✅ Same padding for both */
-  border-radius: 8px;
-  width: 90%;
-  margin: 2px 0; /* ✅ Reduce vertical spacing */
-  gap:10px
-}
-
-.subItem{
-    padding: 12px 10px;
-}
-
-/* Hover Effect */
-.subItem:hover,
-.dmItem:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-/* Selected Chat Styling */
-.selectedChat {
-  background: #C7EAFF; /* Light blue */
-  margin-left: 10px; /* ✅ Same left margin for both */
-}
-
-/* Ensure sub-items (groups) don’t have extra margins */
-.subItems {
-  margin-left: 20px; /* ✅ Reduced margin */
-  display: flex;
-  flex-direction: column;
-  gap: 5px; /* ✅ Reduce vertical gap */
-}
-
-
-.groupAvatar {
-  border-radius: 50%;
 }
 
 .createGroupButton {
@@ -150,20 +38,4 @@
   &:hover {
     background: darken($primary-color, 10%);
   }
-}
-
-.modalOverlay {
-  position: fixed;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.unread {
-  font-weight: bold;
 }

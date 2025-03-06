@@ -1,0 +1,49 @@
+@use "../../../../styles/variables.scss" as *;
+.toolbar {
+  display: flex;
+  gap: 8px;
+}
+
+.toolbar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #5b7083;
+  transition: 0.2s;
+
+  &:hover {
+    color: #0077cc;
+  }
+}
+
+.input {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-size: 14px;
+  color: #333;
+  background: transparent;
+  outline: none;
+}
+
+.fileInput {
+  display: none;
+}
+
+.sendButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #0077cc;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    color: #005fa3;
+  }
+}
+
+.bottomBar {
+  display: flex;
+  justify-content: space-between;
+}

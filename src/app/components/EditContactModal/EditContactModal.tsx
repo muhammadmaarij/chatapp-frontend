@@ -1,15 +1,11 @@
 "use client";
-import { useState } from "react";
 import styles from "./EditContactModal.module.scss";
 import { poppins } from "@/app/fonts";
-import CloseButton from "../CloseButton/CloseButton";
-
-interface EditContactModalProps {
-  initialEmail: string;
-  initialContact: string;
-  onClose: () => void;
-  onSave: (email: string, contact: string) => void;
-}
+import Modal from "../Modal/Modal";
+import { EditContactModalProps } from "@/types/components/types";
+import OutlineButton from "../OutlineButton/OutlineButton";
+import Button from "../PrimaryButton/Button";
+import useEditContact from "@/hooks/user/useEditContact";
 
 export default function EditContactModal({
   initialEmail,
@@ -17,84 +13,43 @@ export default function EditContactModal({
   onClose,
   onSave,
 }: EditContactModalProps) {
-  const [email, setEmail] = useState(initialEmail);
-  const [contact, setContact] = useState(initialContact);
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setContact(e.target.value);
-  };
-
-  const handleSave = () => {
-    onSave(email, contact);
-  };
+  const { email, contact, handleEmailChange, handleContactChange, handleSave } =
+    useEditContact(initialEmail, initialContact, onSave);
 
   return (
-    <div className={styles.modalContainer}>
-      <div className={styles.overlay} onClick={onClose} />
-      <div className={`${poppins.className} ${styles.modal}`}>
-        <ModalHeader onClose={onClose} />
-
-        <hr className={styles.line} />
-
-        <div className={styles.inputGroup}>
-          <label>Email address</label>
-          <input
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-            className={styles.input}
-          />
-        </div>
-
-        <div className={styles.inputGroup}>
-          <label>Contact number</label>
-          <input
-            type="text"
-            value={contact}
-            onChange={handleContactChange}
-            className={styles.input}
-          />
-        </div>
-
-        <button className={styles.addInfo}>+ Add information</button>
-
-        <ModalActions onClose={onClose} onSave={handleSave} />
+    <Modal title="Edit Contact Information" onClose={onClose}>
+      <div className={styles.inputGroup}>
+        <label htmlFor="email">Email address</label>
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={handleEmailChange}
+          className={styles.input}
+          aria-label="Edit email"
+        />
       </div>
-    </div>
-  );
-}
 
-interface ModalHeaderProps {
-  onClose: () => void;
-}
+      <div className={styles.inputGroup}>
+        <label htmlFor="contact">Contact number</label>
+        <input
+          id="contact"
+          type="text"
+          value={contact}
+          onChange={handleContactChange}
+          className={styles.input}
+          aria-label="Edit contact number"
+        />
+      </div>
 
-function ModalHeader({ onClose }: ModalHeaderProps) {
-  return (
-    <div className={styles.header}>
-      <h3 className={styles.heading}>Edit contact information</h3>
-      <CloseButton onClick={onClose} />
-    </div>
-  );
-}
-
-interface ModalActionsProps {
-  onClose: () => void;
-  onSave: () => void;
-}
-
-function ModalActions({ onClose, onSave }: ModalActionsProps) {
-  return (
-    <div className={styles.buttonGroup}>
-      <button className={styles.cancelButton} onClick={onClose}>
-        Cancel
+      <button className={styles.addInfo} aria-label="Add more info">
+        + Add information
       </button>
-      <button className={styles.saveButton} onClick={onSave}>
-        Save changes
-      </button>
-    </div>
+
+      <div className={styles.buttonGroup}>
+        <OutlineButton onClick={onClose}>Cancel</OutlineButton>
+        <Button onClick={handleSave}>Save changes</Button>
+      </div>
+    </Modal>
   );
 }
